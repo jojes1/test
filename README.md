@@ -20,3 +20,5 @@ This is feature6 commit
 This is feature7 commit 1.
 
 This is feature7 commit 2.
+
+This is main commit.
