@@ -9,3 +9,5 @@ New line.
 New line again.
 
 This is a new comment.
+
+This is feature4.
