@@ -17,4 +17,6 @@ This is feature5 commit 2.
 
 This is feature6 commit
 
+This is main added commit
+
 This is main commit.
