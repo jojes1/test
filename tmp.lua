@@ -1,69 +1,36 @@
 return {
-  "lewis6991/gitsigns.nvim",
+  "folke/which-key.nvim",
+  event = "VeryLazy",
   opts = {
-    on_attach = function(bufnr)
-      local gitsigns = require "gitsigns"
-
-      local function map(mode, l, r, opts)
-        opts = opts or {}
-        opts.buffer = bufnr
-        vim.keymap.set(mode, l, r, opts)
-      end
-
-      -- Navigation
-      map("n", "<leader>gj", function()
-        if vim.wo.diff then
-          vim.cmd.normal { "]c", bang = true }
-        else
-          gitsigns.nav_hunk "next"
-        end
-      end, { desc = "Next hunk" })
-
-      map("n", "<leader>gk", function()
-        if vim.wo.diff then
-          vim.cmd.normal { "[c", bang = true }
-        else
-          gitsigns.nav_hunk "prev"
-        end
-      end, { desc = "Prev hunk" })
-
-      -- Actions
-      -- map('n', '<leader>hs', gitsigns.stage_hunk)
-      -- map('n', '<leader>hr', gitsigns.reset_hunk)
-
-      -- map('v', '<leader>hs', function()
-      --   gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-      -- end)
-      --
-      -- map('v', '<leader>hr', function()
-      --   gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
-      -- end)
-
-      -- map('n', '<leader>hS', gitsigns.stage_buffer)
-      -- map('n', '<leader>hR', gitsigns.reset_buffer)
-      map("n", "<leader>gP", gitsigns.preview_hunk, { desc = "Preview hunk" })
-      map("n", "<leader>gp", gitsigns.preview_hunk_inline, { desc = "Preview hunk inline" })
-
-      map("n", "<leader>gB", function()
-        gitsigns.blame_line { full = true }
-      end, { desc = "Blame line full" })
-
-      -- map('n', '<leader>gd', gitsigns.diffthis, { desc = 'Diff this' })
-
-      -- map('n', '<leader>gD', function()
-      --   gitsigns.diffthis('~')
-      -- end, { desc = 'Diff this ~' })
-
-      -- map('n', '<leader>hQ', function() gitsigns.setqflist('all') end)
-      -- map('n', '<leader>hq', gitsigns.setqflist)
-
-      -- Toggles
-      map("n", "<leader>gb", gitsigns.toggle_current_line_blame, { desc = "Toggle current line blame" })
-      -- map('n', '<leader>td', gitsigns.toggle_deleted)
-      -- map('n', '<leader>tw', gitsigns.toggle_word_diff)
-
-      -- Text object
-      -- map({'o', 'x'}, 'ih', gitsigns.select_hunk)
-    end,
+    defaults = {
+      mode = "n",
+      prefix = "<leader>",
+    },
+    preset = "helix",
+    spec = {
+      { "<leader>s", group = "Search", mode = { "n", "v" } },
+      { "<leader>sd", group = "Diagnostic", mode = { "n" } },
+      { "<leader>sg", group = "Git", mode = { "n" } },
+      { "<leader>a", group = "Tabs" },
+      { "<leader>am", group = "Move" },
+      { "<leader>b", group = "Buffer" },
+      { "<leader>c", group = "Snacks" },
+      { "<leader>d", group = "Debug" },
+      { "<leader>g", group = "Git", mode = { "n", "v" } },
+      { "<leader>w", group = "Window" },
+      { "<leader>l", group = "LSP" },
+      { "<leader>wd", group = "Delete" },
+      { "<leader>t", group = "Terminal" },
+      { "<leader>u", group = "Toggle functions" },
+      { "<leader>x", group = "Dagnostic" },
+      { "<leader>j", group = "Notes" },
+      { "<leader>js", group = "Search" },
+      { "<leader>m", group = "Miscellaneous" },
+      { "<leader> ", group = "Behave" },
+    },
+    win = {
+      padding = { 2, 2, 2, 2 },
+      border = "rounded",
+    },
   },
 }
