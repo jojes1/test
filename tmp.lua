@@ -1,33 +1,37 @@
 return {
-	"L3MON4D3/LuaSnip",
-	-- follow latest release.
-	version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
-	event = "VeryLazy",
+  "nvim-lualine/lualine.nvim",
+	dependencies = { "nvim-tree/nvim-web-devicons" },
+  config = function()
 
-	config = function()
-		local ls = require "luasnip"
-		require("luasnip.loaders.from_lua").load { paths = "./snippets" }
-		ls.config.set_config {
-			history = true,
-			updateevents = "TextChanged,TextChangedI",
-			enable_autosnippets = true,
-			ext_opts = {
-				[require("luasnip.util.types").choiceNode] = {
-					active = {
-						virt_text = { { " ⟵ Current Choice", "NonTest" } },
-					},
-				},
-			},
-		}
+		local function maximize_status()
+			return vim.t.maximized and '   ' or ''
+		end
 
-		vim.keymap.set({"i"}, "<C-l>", function() ls.expand() end, {silent = true})
-		vim.keymap.set({"i", "s"}, "<C-l>", function() ls.jump( 1) end, {silent = true})
-		vim.keymap.set({"i", "s"}, "<C-k>", function() ls.jump(-1) end, {silent = true})
-
-		vim.keymap.set({"i", "s"}, "<C-E>", function()
-			if ls.choice_active() then
-				ls.change_choice(1)
-			end
-		end, {silent = true})
-	end,
+    require("lualine").setup {
+      options = {
+        globalstatus = true,
+        component_separators = { left = "", right = "" },
+        section_separators = { left = "", right = "" },
+        ignore_focus = { "neo-tree" },
+        -- theme = custom_wombat,
+        theme = 'gruvbox-material',
+      },
+      sections = {
+        lualine_a = { "mode" },
+        lualine_b = { "branch" },
+        -- lualine_c = { "diagnostics" },
+        lualine_c = { maximize_status, { "filename", path = 2 }, "diagnostics" },
+        lualine_x = { "filetype" },
+        lualine_y = { "progress" },
+        lualine_z = {},
+      },
+      extensions = { "quickfix", "man", "fugitive" },
+      -- vim.api.nvim_set_hl(0, "lualine_c_normal", { fg = "#2e2c2f", bg = "#729b79" })
+      -- windows_color = {
+      --   active = 'lualine_{section}_inactive',
+      --   inactive = 'lualine_{section}_inactive',
+      -- },
+    }
+  end,
 }
+
