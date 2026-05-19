@@ -1,56 +1,87 @@
-vim.keymap.set('i', 'jk', '<esc>', { desc = 'Exit insert mode' })
-vim.keymap.set('i', 'jj', '<esc>', { desc = 'Exit insert mode' })
 
--- Move between windows with Ctrl+hjkl (like tmux)
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window", remap = true })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window", remap = true })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window", remap = true })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window", remap = true })
+vim.api.nvim_create_autocmd("TextYankPost", {
+  desc = "Highlight on yank",
+  group = require("config.helpers").augroup("highlight_yank"),
+  callback = function()
+    (vim.hl or vim.highlight).on_yank()
+  end,
+})
 
--- Resize windows with Ctrl+Shift+arrows
-vim.keymap.set("n", "<C-S-Up>", "<cmd>resize +5<cr>", { desc = "Resize up", noremap = true, silent = true } )
-vim.keymap.set("n", "<C-S-Down>", "<cmd>resize -5<cr>", { desc = "Resize down", noremap = true, silent = true })
-vim.keymap.set("n", "<C-S-Left>", "<cmd>vertical resize -5<cr>", { desc = "Resize left", noremap = true, silent = true })
-vim.keymap.set("n", "<C-S-Right>", "<cmd>vertical resize +5<cr>", { desc = "Resize right", noremap = true, silent = true })
+vim.api.nvim_create_autocmd({ "VimResized" }, {
+  desc = "Resize splits if window got resized",
+  group = require("config.helpers").augroup("resize_splits"),
+  callback = function()
+    local current_tab = vim.fn.tabpagenr()
+    vim.cmd("tabdo wincmd =")
+    vim.cmd("tabnext " .. current_tab)
+  end,
+})
 
--- Clear search highlighting
-vim.keymap.set({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and Clear hlsearch" })
+vim.api.nvim_create_autocmd("FileType", {
+  desc = "Close some filetypes with <q>",
+  group = require("config.helpers").augroup("close_with_q"),
+  pattern = {
+    "PlenaryTestPopup",
+    "checkhealth",
+    "dbout",
+    "gitsigns-blame",
+    "grug-far",
+    "help",
+    "lspinfo",
+    "neotest-output",
+    "neotest-output-panel",
+    "neotest-summary",
+    "notify",
+    "qf",
+    "spectre_panel",
+    "startuptime",
+    "tsplayground",
+  },
+  callback = function(event)
+    vim.bo[event.buf].buflisted = false
+    vim.schedule(function()
+      vim.keymap.set("n", "q", function()
+        vim.cmd("close")
+        pcall(vim.api.nvim_buf_delete, event.buf, { force = true })
+      end, {
+        buffer = event.buf,
+        silent = true,
+        desc = "Quit buffer",
+      })
+    end)
+  end,
+})
 
--- Smart search navigation (n always goes forward, N always backward)
-vim.keymap.set("n", "n", "'Nn'[v:searchforward].'zv'", { expr = true, desc = "Next Search Result" })
-vim.keymap.set("x", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next Search Result" })
-vim.keymap.set("o", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next Search Result" })
-vim.keymap.set("n", "N", "'nN'[v:searchforward].'zv'", { expr = true, desc = "Prev Search Result" })
-vim.keymap.set("x", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev Search Result" })
-vim.keymap.set("o", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev Search Result" })
+-- Prevent repeating comments when creating new line
+vim.cmd('autocmd BufEnter * set formatoptions-=cro')
+vim.cmd('autocmd BufEnter * setlocal formatoptions-=cro')
 
--- Better indenting (stay in visual mode)
-vim.keymap.set("v", "<S-Tab>", "<gv")
-vim.keymap.set("v", "<Tab>", ">gv")
+vim.api.nvim_create_autocmd('CursorMoved', {
+  group = vim.api.nvim_create_augroup("LspReferenceHighlight", { clear = true }),
+  desc = "Highlight references under cursor",
+  callback = function ()
+    if vim.fn.mode() ~= "i" then
+      local clients = vim.lsp.get_clients({ bufnr = 0 })
+      local supports_highlight = false
+      for _, client in ipairs(clients) do
+        if client.server_capabilities.documentHighlightProvider then
+          supports_highlight = true
+          break
+        end
+      end
+      if supports_highlight then
+        vim.lsp.buf.clear_references()
+        vim.lsp.buf.document_highlight()
+      end
+    end
+  end
+})
 
--- Save file (works in all modes)
-vim.keymap.set({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
+vim.api.nvim_create_autocmd("CursorMovedI", {
+  group = "LspReferenceHighlight",
+  desc = "Clear highlight when entering insert mode",
+  callback = function ()
+    vim.lsp.buf.clear_references()
+  end
+})
 
--- function PersistentSignatureHelp()
---     vim.api.nvim_exec2([[
---         augroup SigHelp
---             autocmd!
---             autocmd CursorMovedI <buffer> lua vim.lsp.buf.signature_help()
---         augroup end
---         autocmd InsertLeave <buffer> ++once augroup! SigHelp
---     ]], {})
---     vim.lsp.buf.signature_help()
--- end
--- vim.keymap.set('i', '<C-g>', '<cmd>lua PersistentSignatureHelp()<CR>', {})
-
-vim.keymap.set("i", "<M-g>", "<esc>lli")
-vim.keymap.set('i', '<C-g>', '(<bs>', {}) -- to get signature help after that the parantheces have been inserted after autocompletion
-
-vim.keymap.set("n", "<C-p>", function()
-  require("fzf-lua").files({ fzf_opts = {['--layout'] = 'reverse-list' } })
-end, { desc = "Find files" })
-
-vim.keymap.set('n', 'gl', vim.diagnostic.open_float, { desc = "Show diagnostic" })
-vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', { desc = "Goto definition" })
-
--- Dependency to plugins
