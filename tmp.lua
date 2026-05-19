@@ -1,60 +1,63 @@
-local ls = require "luasnip"
-
-local s = ls.s
-local i = ls.i
--- local t = ls.t
-
--- local d = ls.dynamic_node
--- local c = ls.choice_node
--- local f = ls.function_node
--- local sn = ls.snippet_node
-
-local fmt = require("luasnip.extras.fmt").fmt
-local rep = require("luasnip.extras").rep
-
-local snippets, autosnippets = {}, {}
-
--- local group = vim.api.nvim_create_augroup("Cpp Snippets", { clear = true })
--- local file_pattern = "*.cpp | *.hpp"
-
-local cout_snippet = s(
-  "mycout",
-  fmt(
-    [[
-std::cout << {} << std::endl;{}
-  ]],
+return {
+  "nvim-neo-tree/neo-tree.nvim",
+  branch = "v3.x",
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+    "nvim-tree/nvim-web-devicons",
+    "MunifTanjim/nui.nvim",
     {
-      i(1),
-      i(0),
-    }
-  )
-)
-
-local incguard_snippet = s(
-  "myguard",
-  fmt(
-    [[
-#ifndef {}_{}_
-#define {}_{}_
-
-{}
-
-#endif /* {}_{}_ */
-
-  ]],
-    {
-      i(1),
-      i(2),
-      rep(1),
-      rep(2),
-      i(0),
-      rep(1),
-      rep(2)
-    }
-  )
-)
-
-table.insert(snippets, cout_snippet)
-table.insert(snippets, incguard_snippet)
-
-return snippets, autosnippets
+      "s1n7ax/nvim-window-picker",
+      version = "2.*",
+      opts = {
+        hint = 'floating-big-letter',
+        filter_rules = {
+          include_current_win = false,
+          autoselect_one = true,
+          -- filter using buffer options
+          bo = {
+            -- if the file type is one of following, the window will be ignored
+            filetype = { "neo-tree", "neo-tree-popup", "notify" },
+            -- if the buffer type is one of following, the window will be ignored
+            buftype = { "terminal", "quickfix" },
+          },
+        },
+      },
+    },
+  },
+  opts = {
+    sources = { "filesystem", "buffers", "git_status", "document_symbols" },
+    open_files_do_not_replace_types = { "terminal", "Trouble", "qf", "Outline" },
+    -- use_default_mappings = false,
+    filesystem = {
+      bind_to_cwd = false,
+      follow_current_file = { enabled = false },
+      use_libuv_file_watcher = true,
+      filtered_items = {
+        hide_dotfiles = true,
+      },
+      window = {
+        mappings = {
+          ["P"] = "focus_preview",
+        },
+      },
+    },
+    window = {
+      mappings = {
+        ["l"] = "open_with_window_picker",
+        ["<space>"] = "none",
+      },
+    },
+    default_component_configs = {
+      indent = {
+        with_expanders = true, -- if nil and file nesting is enabled, will enable expanders
+        expander_collapsed = "",
+        expander_expanded = "",
+        expander_highlight = "NeoTreeExpander",
+      },
+      file_size = { enabled = false },
+      last_modified = { enabled = false },
+      created = { enabled = false },
+      type = { enabled = false },
+    },
+  },
+}
