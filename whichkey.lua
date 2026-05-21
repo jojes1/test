@@ -16,6 +16,7 @@ return {
       { "<leader>p", "viwpgvy", desc = "Paste from system clipboard to word under cursor", mode = "n" },
       { "<leader>p", "pgvy", desc = "Paste from system clipboard to selection", mode = "v" },
       { "<leader>f", "<cmd>w<cr><esc>", desc = "Save File", mode = "n" },
+      { "<leader>c", "<cmd>q<cr>", desc = "Close window", mode = "n" },
       { "<leader>q", "<cmd>qa<cr>", desc = "Quit All", mode = "n" },
       { "<leader>s", group = "Search", mode = { "n", "v" } },
       { "<leader>st", function()
@@ -38,6 +39,24 @@ return {
       { "<leader>wm", function()
         require("maximize").toggle()
       end, desc = "Toggle maximizing the current window", mode = "n" },
+      { "<leader>wh", function ()
+        require("config.helpers").open_corresponding_file("h")
+      end, desc = "Open corresponding file to left", mode = "n" },
+      { "<leader>wl", function ()
+        require("config.helpers").open_corresponding_file("l")
+      end, desc = "Open corresponding file to right", mode = "n" },
+      { "<leader>wj", function ()
+        require("config.helpers").open_corresponding_file("j")
+      end, desc = "Open corresponding file below", mode = "n" },
+      { "<leader>wk", function ()
+        require("config.helpers").open_corresponding_file("k")
+      end, desc = "Open corresponding file above", mode = "n" },
+      { "<leader>wv", function ()
+        require("config.helpers").open_corresponding_file("vs")
+      end, desc = "Open corresponding file as vertical split", mode = "n" },
+      { "<leader>ws", function ()
+        require("config.helpers").open_corresponding_file("hs")
+      end, desc = "Open corresponding file as horizontal split", mode = "n" },
       { "<leader>g", group = "Git", mode = { "n" } },
       { "<leader>gp", "<cmd>Gitsigns preview_hunk<cr>", desc = "Preview hunk", mode = "n" },
       { "<leader>gb", "<cmd>Gitsigns toggle_current_line_blame<cr>", desc = "Toggle current line blame", mode = "n" },

@@ -1,37 +1,52 @@
-return {
-  "nvim-lualine/lualine.nvim",
-	dependencies = { "nvim-tree/nvim-web-devicons" },
-  config = function()
+local M = {}
 
-		local function maximize_status()
-			return vim.t.maximized and '   ' or ''
-		end
+function M.augroup(name)
+  return vim.api.nvim_create_augroup("user_" .. name, { clear = true })
+end
 
-    require("lualine").setup {
-      options = {
-        globalstatus = true,
-        component_separators = { left = "", right = "" },
-        section_separators = { left = "", right = "" },
-        ignore_focus = { "neo-tree" },
-        -- theme = custom_wombat,
-        theme = 'gruvbox-material',
-      },
-      sections = {
-        lualine_a = { "mode" },
-        lualine_b = { "branch" },
-        -- lualine_c = { "diagnostics" },
-        lualine_c = { maximize_status, { "filename", path = 2 }, "diagnostics" },
-        lualine_x = { "filetype" },
-        lualine_y = { "progress" },
-        lualine_z = {},
-      },
-      extensions = { "quickfix", "man", "fugitive" },
-      -- vim.api.nvim_set_hl(0, "lualine_c_normal", { fg = "#2e2c2f", bg = "#729b79" })
-      -- windows_color = {
-      --   active = 'lualine_{section}_inactive',
-      --   inactive = 'lualine_{section}_inactive',
-      -- },
-    }
-  end,
-}
+function M.split_filename(strFilename)
+  -- Returns the Path, Filename, and Extension as 3 values
+  return string.match(strFilename, "^(.-)([^\\/]-)%.([^\\/%.]-)%.?$")
+end
 
+function M.open_corresponding_file(how_to_open)
+  -- local root_patterns = { ".git", ".clang-format", "pyproject.toml", "setup.py" }
+  -- local root_dir = vim.fs.dirname(vim.fs.find(root_patterns, { upward = true })[1])
+  local name = vim.api.nvim_buf_get_name(0)
+  name = name.gsub(name, "\\", "/")
+  local _,file,ext = M.split_filename(name)
+
+  -- local file_name = ""
+  -- for part in name:gmatch("([^/]+)") do
+  --     file_name = part
+  -- end
+
+  local new_ext = "h"
+  if ext == "c" then new_ext = "h"
+  elseif ext == "cpp" then new_ext = "hpp"
+  elseif ext == "h" then new_ext = "c"
+  elseif ext == "hpp" then new_ext = "cpp" end
+
+  local new_file = file .. "." .. new_ext
+
+  local pattern = {new_file}
+  local found = vim.fs.find(pattern, { upward = false })[1]
+
+
+  if how_to_open == "vs" then
+    vim.cmd('vsplit')
+  elseif how_to_open == "hs" then
+    vim.cmd('split')
+  elseif how_to_open == "h" then
+    vim.cmd("wincmd h")
+  elseif how_to_open == "l" then
+    vim.cmd("wincmd l")
+  elseif how_to_open == "j" then
+    vim.cmd("wincmd j")
+  elseif how_to_open == "k" then
+    vim.cmd("wincmd k")
+  end
+  vim.cmd('e ' .. found)
+end
+
+return M
