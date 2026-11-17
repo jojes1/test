@@ -1,0 +1,151 @@
+;; =================================================================
+;; DOOM-THEMES
+;; =================================================================
+;; https://github.com/doomemacs/themes/archive/refs/heads/master.zip
+
+(add-to-list 'load-path "~/.emacs.d/plugins/doom-themes")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/plugins/doom-themes/themes")
+(require 'doom-themes)
+(load-theme 'doom-gruvbox t)
+
+;; =================================================================
+;; COMPAT
+;; =================================================================
+;; https://github.com/emacs-compat/compat/archive/refs/heads/main.zip
+
+(add-to-list 'load-path "~/.emacs.d/plugins/compat")
+(require 'compat)
+
+;; =================================================================
+;; ORDERLESS
+;; =================================================================
+;; https://github.com/oantolin/orderless/archive/refs/heads/master.zip
+
+;; Load Orderless
+(add-to-list 'load-path "~/.emacs.d/plugins/orderless")
+(require 'orderless)
+
+;; Set Orderless as the primary completion style
+(setq completion-styles '(orderless basic))
+(setq completion-category-defaults nil)
+(setq completion-category-overrides '((file (styles partial-completion))))
+
+(setq read-file-name-completion-ignore-case t)
+(setq read-buffer-completion-ignore-case t)
+(setq completion-ignore-case t)
+
+;; =================================================================
+;; VERTICO
+;; Is dempendent of COMPAT which must be required before.
+;; =================================================================
+;; https://github.com/minad/vertico/archive/refs/heads/main.zip
+
+(add-to-list 'load-path "~/.emacs.d/plugins/vertico")
+(add-to-list 'load-path "~/.emacs.d/plugins/vertico/extensions")
+
+;; Load and enable Vertico
+(require 'vertico)
+(vertico-mode 1)
+
+;; Register the Info manual
+(with-eval-after-load 'info
+  (info-initialize)
+  (add-to-list 'Info-directory-list "~/.emacs.d/plugins/vertico"))
+
+(defun vertico-manual ()
+  "Open the Vertico README manual."
+  (interactive)
+  (find-file-read-only "~/.emacs.d/plugins/vertico/README.org"))
+
+;; =================================================================
+;; GOTO-CHG
+;; =================================================================
+;; https://github.com/emacs-evil/goto-chg/archive/refs/heads/master.zip
+
+(add-to-list 'load-path "~/.emacs.d/plugins/goto-chg")
+
+;; =================================================================
+;; EVIL
+;; Is dempendent of GOTO-CHG which must be required before.
+;; =================================================================
+;; https://github.com/emacs-evil/evil/archive/refs/heads/master.zip
+
+(add-to-list 'load-path "~/.emacs.d/plugins/evil")
+;; Load and enable Evil mode
+(require 'evil)
+(evil-mode 1)
+
+;; =================================================================
+;; GENERAL SETTINGS
+;; =================================================================
+
+;; Disable the welcome splash screen
+(setq inhibit-startup-screen t)
+
+;; Clear the default comment text inside the *scratch* buffer
+(setq initial-scratch-message nil)
+
+;; Stop creating backup~ files
+(setq make-backup-files nil)
+
+;; Stop creating #autosave# files
+(setq auto-save-default nil)
+
+;; Stop creating .#lockfiles
+(setq create-lockfiles nil)
+
+(setq frame-title-format "🌴 %b")
+
+;; Set the frame title format with a palm tree emoji
+;; frame-title-format (list "🌴 %b")
+
+;; Disable the menu bar
+(menu-bar-mode -1)
+
+;; Disable the tool bar
+(tool-bar-mode -1)
+
+;; Disable the scroll bar
+(scroll-bar-mode -1)
+
+;; Enable line numbers
+(global-display-line-numbers-mode 1)
+
+;; Set Dired listing switches for more minimalist output
+(setq dired-listing-switches "-laghov --group-directories-first")
+
+(setq default-directory "~/.emacs.d")
+(setq command-line-default-directory "~/.emacs.d")
+
+;; Enable native pixel-based scrolling
+(pixel-scroll-precision-mode 1)
+
+;; Optional: Smoothly interpolate PgUp and PgDown scrolling
+(setq pixel-scroll-precision-interpolate-page t)
+
+;; Scroll one line at a time instead of jumping half a screen
+(setq scroll-conservatively 101)
+
+;; Keep a 5-line buffer margin at the top and bottom of the screen
+(setq scroll-margin 0)
+
+;; Prevent erratic jumps when scrolling past tall lines or images
+(setq auto-window-vscroll nil)
+
+;; To close menus, prompts, or popups in Emacs with a single press of the Escape key
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+;; Disable sound
+(setq ring-bell-function 'ignore)
+
+;; Set font
+(set-face-attribute 'default nil :font "DejaVu Sans Mono" :height 120)
+
+;; =================================================================
+;; KEY BINDINGS
+;; =================================================================
+
+;; Works for standard minibuffer prompts and M-x
+(define-key minibuffer-local-map (kbd "C-l") #'exit-minibuffer)
+(define-key minibuffer-local-completion-map (kbd "C-l") #'exit-minibuffer)
+(define-key minibuffer-local-must-match-map (kbd "C-l") #'exit-minibuffer)
