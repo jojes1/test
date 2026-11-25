@@ -238,7 +238,9 @@
   (kbd "RET") nil
   (kbd "l") (neotree-make-executor :file-fn #'my/neo-open-file-window-picker
                                    :dir-fn #'neo-open-dir)
-  (kbd "a") #'neotree-create-node)
+  (kbd "a") #'neotree-create-node
+  (kbd "R") #'neotree-refresh
+  (kbd "r") #'neotree-rename-node)
 
 
 (setq neo-window-fixed-size nil)
@@ -1084,6 +1086,14 @@ With a prefix argument PUSH, also push all branches and tags."
   (gdb "gdb -i=mi C:/user/cpp/calculator/build/debug/calculator.exe"))
 
 (setq gdb-restore-window-configuration-after-quit t)
+
+(with-eval-after-load 'eglot
+  (add-hook 'eglot-managed-mode-hook
+            (lambda ()
+              (remove-hook 'post-self-insert-hook
+                           #'eglot--post-self-insert-hook t))))
+
+(setq-default c-ts-mode-indent-style 'bsd)
 
 ;; =================================================================
 ;; KEY BINDINGS
