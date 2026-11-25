@@ -886,6 +886,19 @@ With a prefix argument PUSH, also push all branches and tags."
 ;; Automatically focus the new window when splitting vertically (opens to the right)
 (setq evil-vsplit-window-right t)
 
+(defun my/c-cpp-indent-settings ()
+  "Use 3 spaces for C/C++ indentation."
+  (setq-local tab-width 3
+              indent-tabs-mode nil
+              c-basic-offset 3
+              c-ts-mode-indent-offset 3))
+
+(dolist (hook '(c-mode-hook
+                c-ts-mode-hook
+                c++-mode-hook
+                c++-ts-mode-hook))
+  (add-hook hook #'my/c-cpp-indent-settings))
+
 (with-eval-after-load 'eglot
   (add-to-list 'eglot-server-programs
                '((c-mode c-ts-mode c++-mode c++-ts-mode)
