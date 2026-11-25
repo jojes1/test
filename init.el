@@ -763,6 +763,38 @@ With a prefix argument PUSH, also push all branches and tags."
 ;; =================================================================
 
 ;; =================================================================
+;; CORFU
+;; =================================================================
+;; https://github.com/minad/corfu
+
+(add-to-list 'load-path "~/.emacs.d/plugins/corfu")
+(add-to-list 'load-path "~/.emacs.d/plugins/corfu/extensions")
+
+(with-eval-after-load 'corfu
+  (define-key corfu-map (kbd "C-n") #'corfu-next)
+  (define-key corfu-map (kbd "C-p") #'corfu-previous))
+
+(require 'corfu)
+(global-corfu-mode 1)
+
+(setq corfu-auto t
+      corfu-auto-delay 0.25
+      corfu-auto-prefix 2
+      corfu-quit-no-match t)
+
+;; =================================================================
+;; CAPE
+;; =================================================================
+;; https://github.com/minad/cape
+
+(add-to-list 'load-path "~/.emacs.d/plugins/cape")
+
+(require 'cape)
+
+(add-hook 'completion-at-point-functions #'cape-dabbrev)
+(add-hook 'completion-at-point-functions #'cape-file)
+
+;; =================================================================
 ;; GENERAL SETTINGS
 ;; =================================================================
 
@@ -854,8 +886,17 @@ With a prefix argument PUSH, also push all branches and tags."
 ;; Automatically focus the new window when splitting vertically (opens to the right)
 (setq evil-vsplit-window-right t)
 
+(with-eval-after-load 'eglot
+  (add-to-list 'eglot-server-programs
+               '((c-mode c-ts-mode c++-mode c++-ts-mode)
+                 "C:/Users/jeppe/AppData/Local/nvim-data_001/language-servers/clangd/bin/clangd.exe"
+                 ;;"C:/Users/u117013/AppData/Local/nvim-data/language-servers/clangd/bin/clangd.exe"
+                 "--background-index")))
+
 ;; 1. Start Eglot automatically in C++ buffers
+(add-hook 'c-mode-hook #'eglot-ensure)
 (add-hook 'c++-mode-hook #'eglot-ensure)
+(add-hook 'c-ts-mode-hook #'eglot-ensure) ; If using Tree-sitter
 (add-hook 'c++-ts-mode-hook #'eglot-ensure) ; If using Tree-sitter
 ;;(add-hook 'c++-mode-hook #'font-lock-ensure)
 ;;(add-hook 'c++-ts-mode-hook #'font-lock-ensure)
